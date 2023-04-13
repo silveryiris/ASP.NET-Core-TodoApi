@@ -1,25 +1,35 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 var todoItems = app.MapGroup("/todoitems");
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World!").WithSummary("health check").WithOpenApi();
 
-todoItems.MapGet("/", GetAllTodos);
+todoItems.MapGet("/", GetAllTodos).WithSummary("Get all todo items").WithOpenApi();
 
-todoItems.MapGet("/complete", GetCompleteTodos);
+todoItems.MapGet("/complete", GetCompleteTodos).WithSummary("Get all completed todo items").WithOpenApi();
 
-todoItems.MapGet("/{id}", GetTodo);
+todoItems.MapGet("/{id}", GetTodo).WithSummary("Get todo item by id").WithOpenApi();
 
-todoItems.MapPost("/", CreateTodo);
+todoItems.MapPost("/", CreateTodo).WithSummary("Create new todo item").WithOpenApi();
 
-todoItems.MapPut("/{id}", UpdateTodo);
+todoItems.MapPut("/{id}", UpdateTodo).WithSummary("Update todo item by id").WithOpenApi();
 
-todoItems.MapDelete("/{id}", DeleteTodo);
+todoItems.MapDelete("/{id}", DeleteTodo).WithSummary("Delete todo item by id").WithOpenApi();
 
 
 app.Run();
