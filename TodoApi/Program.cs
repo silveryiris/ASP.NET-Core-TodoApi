@@ -6,6 +6,7 @@ builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList")
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -17,7 +18,7 @@ if (app.Environment.IsDevelopment())
 
 var todoItems = app.MapGroup("/todoitems");
 
-app.MapGet("/", () => "Hello World!").WithSummary("health check").WithOpenApi();
+app.MapHealthChecks("/").WithOpenApi();
 
 todoItems.MapGet("/", GetAllTodos).WithSummary("Get all todo items").WithOpenApi();
 
